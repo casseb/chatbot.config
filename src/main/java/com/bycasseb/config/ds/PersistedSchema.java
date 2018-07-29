@@ -1,5 +1,6 @@
 package com.bycasseb.config.ds;
 
+import com.bycasseb.config.common.MainConstants;
 import org.springframework.data.annotation.Id;
 
 import lombok.Data;
@@ -21,7 +22,7 @@ public class PersistedSchema {
 	
 	public PersistedSchema(String aliases, String group, String schema, Type type) {
 		super();
-		this.id = aliases + " |&| " + group + " |&| " + schema;
+		this.id = aliases + MainConstants.SEPARATOR + group + MainConstants.SEPARATOR + schema;
 		this.aliases = aliases;
 		this.group = group;
 		this.schema = schema;

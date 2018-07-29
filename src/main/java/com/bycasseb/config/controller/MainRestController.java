@@ -15,7 +15,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -203,8 +202,7 @@ public class MainRestController {
         final String encodedUserPassword = auth.replaceFirst("Basic ", "");
         String usernameAndPassword = new String(Base64.decode(encodedUserPassword.getBytes()));
         final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
-        final String username = tokenizer.nextToken();
-        return username;
+		return tokenizer.nextToken();
     }
 	
 	

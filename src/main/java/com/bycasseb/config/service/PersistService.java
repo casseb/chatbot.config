@@ -6,8 +6,8 @@ import com.bycasseb.config.ds.PersistedVariable;
 
 public interface PersistService {
 
-	public void save(PersistedVariable variable);
+	void save(PersistedVariable variable);
 
-	public Optional<PersistedVariable> query(String string);
+	Optional<PersistedVariable> query(String string);
 
 }

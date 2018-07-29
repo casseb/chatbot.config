@@ -1,5 +1,6 @@
 package com.bycasseb.config.common;
 
+import com.bycasseb.config.ds.Type;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
@@ -17,7 +18,15 @@ import com.bycasseb.config.repository.VariableRepository;
 @Component
 @DataMongoTest(includeFilters = @Filter(Repository.class))
 @ActiveProfiles("test")
-public class TestSupport {
+public class TestSupport extends MainConstants {
+
+    protected static final String ID_TEST = "1";
+    protected static final String ALIASES_TEST = "Aliases Test";
+    protected static final String GROUP_TEST = "Group Test";
+    protected static final String SCHEMA_TEST = "Schema Test";
+    protected static final Type TYPE_TEST = Type.STRING;
+    protected static final String VALUE_TEST = "Value Test";
+    protected static final String USER_TEST = "User Test";
 
 	@Autowired
 	private AliasesRepository aliasesRepo;
@@ -31,8 +40,8 @@ public class TestSupport {
 	private UserRepository userRepo;
 	
 	@Before
-	public void before() {
-		aliasesRepo.deleteAll();
+	public void before(){
+	    aliasesRepo.deleteAll();
 		groupRepo.deleteAll();
 		schemaRepo.deleteAll();
 		variableRepo.deleteAll();

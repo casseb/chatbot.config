@@ -14,9 +14,7 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public User query(String username) {
-		if(exists(username)) {
-			return userRepo.findById(username).get();
-		}
+		if(exists(username)) return userRepo.findById(username).get();
 		return null;
 	}
 
@@ -35,12 +33,8 @@ public class UserServiceImpl implements UserService{
 		if(!exists(userName)) {
 			return false;
 		}
-		
-		if(!query(userName).getPassword().equals(password)) {
-			return false;
-		}
-		
-		return true;
+
+		return query(userName).getPassword().equals(password);
 	}
 
 }

@@ -1,10 +1,9 @@
 package com.bycasseb.config.service;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,7 +84,7 @@ public class MainServiceImpl implements MainService{
 		PersistedSchema persistedSchema = new PersistedSchema(aliases, group, schema, Type.STRING);
 		schemaRepo.save(persistedSchema);
 		put(aliases, group);
-		put(aliases, group, schema, Type.STRING.getTypeValidator().getDefault());
+		put(aliases, group, schema, Objects.requireNonNull(Type.STRING.getTypeValidator()).getDefault());
 	}
 
 	@Override
@@ -103,7 +102,7 @@ public class MainServiceImpl implements MainService{
 	public void put(String aliases, String group, String schema, Type type) {
 		PersistedSchema persistedSchema = new PersistedSchema(aliases, group, schema, type);
 		schemaRepo.save(persistedSchema);
-		put(aliases, group, schema, type.getTypeValidator().getDefault());
+		put(aliases, group, schema, Objects.requireNonNull(type.getTypeValidator()).getDefault());
 	}
 
 	@Override
@@ -155,16 +154,11 @@ public class MainServiceImpl implements MainService{
 			delete(aliases, group, schema);
 			return;
 		}
-		
-		if(isSchemaWithTypeVariable(aliases, group, schema, null, value)) {
-			delete(aliases, group, schema);
-			return;
-		}
-		
+
 		if(isInvalidSchema(aliases, group, schema, null, value)) {
 			return;
 		}
-		
+
 		variableRepo.deleteById(aliases + " |&| " + group + " |&| " + schema);
 	}
 
@@ -207,7 +201,7 @@ public class MainServiceImpl implements MainService{
 			result.add("SCHEMA NOT FOUND");
 			return result;
 		}
-		result.add(optionalSchema.get().getType().getTypeValidator().getDefault());
+		result.add(Objects.requireNonNull(optionalSchema.get().getType().getTypeValidator()).getDefault());
 		return result;
 	}
 

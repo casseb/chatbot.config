@@ -1,7 +1,5 @@
 package com.bycasseb.config.service;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.bycasseb.config.ds.Type;
 import com.bycasseb.config.ds.Variable;
-import com.bycasseb.config.ds.exception.InvalidAliasesException;
 import com.bycasseb.config.ds.exception.InvalidValueException;
 import com.bycasseb.config.ds.exception.NullAliasesException;
 import com.bycasseb.config.ds.exception.NullGroupException;

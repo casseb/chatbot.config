@@ -4,6 +4,6 @@ import com.bycasseb.config.ds.Variable;
 
 public interface ValidatorService {
 
-	public void execute(Variable variable) throws Exception;
+	void execute(Variable variable) throws Exception;
 
 }

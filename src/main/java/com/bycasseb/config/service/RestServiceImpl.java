@@ -1,7 +1,5 @@
 package com.bycasseb.config.service;
 
-import java.util.List;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 

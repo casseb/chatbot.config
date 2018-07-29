@@ -9,7 +9,6 @@ spring:
     active: dev
 
 logging:
-  file : log.txt
   pattern:
     console: '%clr(%5p) %d{dd/MM/yy-HH:mm:ss}:%logger{0}[%M,%-4L] - %msg%n'
     file: '%-5level %d{dd/MM/yy-HH:mm:ss}:%logger{0}[%M,%-4L] - %msg%n'

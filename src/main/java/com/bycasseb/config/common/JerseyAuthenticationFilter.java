@@ -1,6 +1,5 @@
 package com.bycasseb.config.common;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -35,8 +34,7 @@ public class JerseyAuthenticationFilter implements ContainerRequestFilter
     private static final Response ACCESS_DENIED = Response.status(Response.Status.UNAUTHORIZED).entity("You cannot access this resource").build();
 
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException
-    {
+    public void filter(ContainerRequestContext requestContext) {
         Method method = resourceInfo.getResourceMethod();
 
         if(method.isAnnotationPresent(PermitAll.class)) {
@@ -50,7 +48,7 @@ public class JerseyAuthenticationFilter implements ContainerRequestFilter
             return;
         }
         final String encodedUserPassword = authorization.get(0).replaceFirst(AUTHENTICATION_SCHEME + " ", "");
-        String usernameAndPassword = new String(Base64.decode(encodedUserPassword.getBytes()));;
+        String usernameAndPassword = new String(Base64.decode(encodedUserPassword.getBytes()));
         final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
         final String username = tokenizer.nextToken();
         final String password = tokenizer.nextToken();

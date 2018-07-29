@@ -8,6 +8,6 @@ import com.bycasseb.config.ds.PersistedGroup;
 
 public interface GroupRepository extends MongoRepository<PersistedGroup, String>{
 
-	public List<PersistedGroup> findByAliases(String aliases);
+	List<PersistedGroup> findByAliases(String aliases);
 	
 }
