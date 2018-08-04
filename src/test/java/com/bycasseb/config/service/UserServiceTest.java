@@ -1,46 +1,74 @@
 package com.bycasseb.config.service;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+import com.bycasseb.config.common.TestSupport;
+import com.bycasseb.config.ds.User;
+import com.bycasseb.config.repository.UserRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Optional;
+
 @RunWith(SpringRunner.class)
 @DataMongoTest(includeFilters = @Filter(Service.class))
 @ActiveProfiles("test")
-public class UserServiceTest {
+public class UserServiceTest extends TestSupport {
 
-	@Autowired
-	private UserService userService;
-	
+	@InjectMocks
+	private UserServiceImpl userService;
+	@Mock
+    private UserRepository userRepoMock;
+
+    @Before
+	public void before(){
+        Optional<User> optional = Optional.of(new User(USER_TEST, PASSWORD_TEST));
+        doReturn(optional).when(userRepoMock).findById(USER_TEST);
+    }
+
 	@Test
 	public void createUser() {
-		userService.newUser("User Test", "Password Test");
-		assertTrue(userService.exists("User Test"));
+	    User user = new User(USER_TEST, PASSWORD_TEST);
+		userService.newUser(USER_TEST, PASSWORD_TEST);
+
+		verify(userRepoMock, times(1)).save(user);
 	}
-	
+
+    @Test
+    public void verifiedExistUser() {
+        User user = new User(USER_TEST, PASSWORD_TEST);
+        userService.newUser(USER_TEST, PASSWORD_TEST);
+
+        verify(userRepoMock, times(1)).save(user);
+    }
+
 	@Test
 	public void successLogin() {
-		userService.newUser("User Test", "Password Test");
-		assertTrue(userService.login("User Test", "Password Test"));
+		userService.newUser(USER_TEST, PASSWORD_TEST);
+		assertTrue(userService.login(USER_TEST, PASSWORD_TEST));
 	}
 	
 	@Test
 	public void incorrectUserName() {
-		userService.newUser("User Test", "Password Test");
-		assertFalse(userService.login("User Test Incorrect", "Password Test"));
+		userService.newUser(USER_TEST, PASSWORD_TEST);
+		assertFalse(userService.login(INVALID_TEST, PASSWORD_TEST));
 	}
 	
 	@Test
 	public void incorrectPassword() {
-		userService.newUser("User Test", "Password Test");
-		assertFalse(userService.login("User Test", "Password Test Incorrect"));
+		userService.newUser(USER_TEST, PASSWORD_TEST);
+		assertFalse(userService.login(USER_TEST, INVALID_TEST));
 	}
 	
 }

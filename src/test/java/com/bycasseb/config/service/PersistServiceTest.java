@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.bycasseb.config.common.TestSupport;
@@ -24,7 +23,6 @@ import com.bycasseb.config.ds.PersistedVariable;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest(includeFilters = @Filter(Service.class))
-@ActiveProfiles("test")
 public class PersistServiceTest extends TestSupport{
 
 	@InjectMocks

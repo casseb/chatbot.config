@@ -1,16 +1,13 @@
 package com.bycasseb.config.ds;
 
+import lombok.*;
 import org.springframework.data.annotation.Id;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class User {
 	
 	@Id

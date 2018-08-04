@@ -1,14 +1,25 @@
 package com.bycasseb.config.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
+import static org.mockito.Mockito.*;
+
+import com.bycasseb.config.ds.*;
+import com.bycasseb.config.repository.AliasesRepository;
+import com.bycasseb.config.repository.GroupRepository;
+import com.bycasseb.config.repository.SchemaRepository;
+import com.bycasseb.config.repository.VariableRepository;
+import lombok.SneakyThrows;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.stereotype.Service;
@@ -16,475 +27,267 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.bycasseb.config.common.TestSupport;
-import com.bycasseb.config.ds.Type;
-import com.bycasseb.config.ds.Variable;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest(includeFilters = @Filter(Service.class))
 @ActiveProfiles("test")
 public class MainServiceTest extends TestSupport{
 	
-	@Autowired
-	private MainService service;
+	@InjectMocks
+	private MainServiceImpl service;
+	@Mock
+	private AliasesRepository aliasesRepoMock;
+	@Mock
+    private GroupRepository groupRepoMock;
+	@Mock
+    private SchemaRepository schemaRepoMock;
+	@Mock
+    private VariableRepository variableRepoMock;
+	@Mock
+    private ValidatorServiceImpl validatorServiceMock;
+
+	@Before
+    @SneakyThrows
+    public void before(){
+	    doNothing().when(validatorServiceMock).execute(any());
+
+        List<PersistedGroup> dummyGroups = new LinkedList<>();
+        dummyGroups.add(new PersistedGroup(ALIASES_TEST, GROUP_TEST));
+
+        List<PersistedSchema> dummySchemas = new LinkedList<>();
+        dummySchemas.add(new PersistedSchema(ALIASES_TEST, GROUP_TEST, SCHEMA_TEST, TYPE_STRING_TEST));
+
+        Variable dummyVariable = new Variable(ALIASES_TEST, GROUP_TEST, TYPE_STRING_TEST, SCHEMA_TEST, VALUE_TEST);
+        Optional<PersistedVariable> dummyPersistedVariable = Optional.of(new PersistedVariable(dummyVariable));
+
+	    doReturn(true).when(aliasesRepoMock).existsById(ALIASES_TEST);
+        doReturn(true).when(groupRepoMock).existsById(ALIASES_TEST + SEPARATOR + GROUP_TEST);
+        doReturn(true).when(schemaRepoMock).existsById(ALIASES_TEST + SEPARATOR + GROUP_TEST + SEPARATOR + SCHEMA_TEST);
+        doReturn(true).when(variableRepoMock).existsById(ALIASES_TEST + SEPARATOR + GROUP_TEST + SEPARATOR + SCHEMA_TEST + SEPARATOR + VALUE_TEST);
+
+	    doReturn(dummyGroups).when(groupRepoMock).findByAliases(any());
+	    doReturn(dummySchemas).when(schemaRepoMock).findByAliasesAndGroup(any(),any());
+	    doReturn(dummyPersistedVariable).when(variableRepoMock).findById(any());
+    }
 	
 	@Test
 	public void createAliasesTest() {
-		service.put("Aliases Test");
-		assertTrue(service.exists("Aliases Test"));
+		service.put(ALIASES_TEST);
+		verify(aliasesRepoMock, times(1)).save(any());
 	}
+
+	@Test
+    public void existAliasesTest() {
+	    assertTrue(service.exists(ALIASES_TEST));
+    }
 	
 	@Test
-	public void deleteAliasesTest() {
-		service.put("Aliases Test");
-		service.delete("Aliases Test");
-		assertFalse(service.exists("Aliases Test"));
+	public void deleteAliasesTest(){
+		service.delete(ALIASES_TEST);
+        verify(aliasesRepoMock, times(1)).deleteById(ALIASES_ID);
 	}
 	
 	@Test
 	public void createGroupTest() {
-		service.put("Aliases Test","Group Test");
-		assertTrue(service.exists("Aliases Test","Group Test"));
+		service.put(ALIASES_TEST, GROUP_TEST);
+        verify(groupRepoMock, times(1)).save(any());
 	}
+
+	@Test
+    public void existGroupTest(){
+	    assertTrue(service.exists(ALIASES_TEST, GROUP_TEST));
+    }
 	
 	@Test
 	public void deleteGroupTest() {
-		service.put("Aliases Test","Group Test");
-		service.delete("Aliases Test","Group Test");
-		assertFalse(service.exists("Aliases Test","Group Test"));
+		service.delete(ALIASES_TEST,GROUP_TEST);
+        verify(groupRepoMock, times(1)).deleteById(GROUP_ID);
 	}
 	
 	@Test
 	public void createSchemaStringTest() {
-		service.put("Aliases Test","Group Test", "Schema Test");
-		assertTrue(service.exists("Aliases Test","Group Test", "Schema Test"));
+		service.put(ALIASES_TEST,GROUP_TEST, SCHEMA_TEST);
+        verify(schemaRepoMock, times(1)).save(any());
 	}
 	
 	@Test
 	public void createSchemaIntegerTest() {
-		service.put("Aliases Test","Group Test", "Schema Test", Type.INTEGER);
-		assertTrue(service.exists("Aliases Test","Group Test", "Schema Test"));
+		service.put(ALIASES_TEST,GROUP_TEST, SCHEMA_TEST, TYPE_INTEGER_TEST);
+        verify(schemaRepoMock, times(1)).save(any());
 	}
+
+	@Test
+    public void existSchemaTest(){
+        assertTrue(service.exists(ALIASES_TEST, GROUP_TEST, SCHEMA_TEST));
+    }
 	
 	@Test
-	public void deleteSchemaTest() {
-		service.put("Aliases Test","Group Test", "Schema Test");
-		service.delete("Aliases Test","Group Test", "Schema Test");
-		assertFalse(service.exists("Aliases Test","Group Test", "Schema Test"));
+	public void deleteSchemaTest(){
+		service.delete(ALIASES_TEST,GROUP_TEST, SCHEMA_TEST);
+        verify(schemaRepoMock, times(1)).deleteById(SCHEMA_ID);
 	}
 	
 	@Test
 	public void createValueTest() {
-		service.put("Aliases Test","Group Test", "Schema Test", "Value Test");
-		assertTrue(service.exists("Aliases Test","Group Test", "Schema Test", "Value Test"));
+		service.put(ALIASES_TEST,GROUP_TEST, SCHEMA_TEST, VALUE_TEST);
+        verify(variableRepoMock, times(1)).save(any());
+	}
+
+	@Test
+    public void existValueTest(){
+        assertTrue(service.exists(ALIASES_TEST, GROUP_TEST, SCHEMA_TEST, VALUE_TEST));
+    }
+	
+	@Test
+	public void deleteValueTest(){
+		service.delete(ALIASES_TEST,GROUP_TEST, SCHEMA_TEST, VALUE_TEST);
+        verify(variableRepoMock, times(1)).deleteById(SCHEMA_ID);
 	}
 	
 	@Test
-	public void deleteValueTest() {
-		service.put("Aliases Test","Group Test", "Schema Test", "Value Test");
-		service.delete("Aliases Test","Group Test", "Schema Test", "Value Test");
-		assertFalse(service.exists("Aliases Test","Group Test", "Schema Test", "Value Test"));
-	}
-	
-	@Test
-	public void deleteCascateSchemaTest() {
-		service.put("Aliases Test","Group Test", "Schema Test");
-		service.put("Aliases Test","Group Test", "Schema Test", "Value Test");
-		service.delete("Aliases Test","Group Test", "Schema Test");
-		assertFalse(service.exists("Aliases Test","Group Test", "Schema Test"));
-		assertFalse(service.exists("Aliases Test","Group Test", "Schema Test", "Value Test"));
+	public void deleteCascateSchemaTest(){
+		service.delete(ALIASES_TEST,GROUP_TEST, SCHEMA_TEST);
+		verify(variableRepoMock, times(1)).deleteById(SCHEMA_ID);
+        verify(schemaRepoMock, times(1)).deleteById(SCHEMA_ID);
 	}
 	
 	@Test
 	public void queryGroupTest() {
-		service.put("Aliases Test","Group Test", "Schema Test 1");
-		service.put("Aliases Test","Group Test", "Schema Test 2");
-		service.put("Aliases Test","Group Test", "Schema Test 3");
-		List<String> schemas = service.getList("Aliases Test","Group Test");
-		assertEquals(3,schemas.size());
+		List<String> schemas = service.getList(ALIASES_TEST,GROUP_TEST);
+		assertEquals(1,schemas.size());
 	}
 	
 	@Test
 	public void deleteCascateGroupTest() {
-		service.put("Aliases Test","Group Test");
-		service.put("Aliases Test","Group Test", "Schema Test");
-		service.put("Aliases Test","Group Test", "Schema Test", "Value Test");
-		service.delete("Aliases Test","Group Test");
-		assertFalse(service.exists("Aliases Test","Group Test"));
-		assertFalse(service.exists("Aliases Test","Group Test", "Schema Test"));
-		assertFalse(service.exists("Aliases Test","Group Test", "Schema Test", "Value Test"));
+		service.delete(ALIASES_TEST,GROUP_TEST);
+        verify(variableRepoMock, times(1)).deleteById(SCHEMA_ID);
+        verify(schemaRepoMock, times(1)).deleteById(SCHEMA_ID);
+        verify(groupRepoMock, times(1)).deleteById(GROUP_ID);
 	}
 	
 	@Test
 	public void queryAliasesTest() {
-		service.put("Aliases Test", "Group Test 1");
-		service.put("Aliases Test", "Group Test 2");
-		service.put("Aliases Test", "Group Test 3");
-		
-		List<String> groups = service.getList("Aliases Test");
-		assertEquals(3,groups.size());
+		List<String> groups = service.getList(ALIASES_TEST);
+		assertEquals(1,groups.size());
 	}
 	
 	@Test
 	public void deleteCascateAliasesTest() {
-		service.put("Aliases Test");
-		service.put("Aliases Test","Group Test");
-		service.put("Aliases Test","Group Test", "Schema Test");
-		service.put("Aliases Test","Group Test", "Schema Test", "Value Test");
-		service.delete("Aliases Test");
-		assertFalse(service.exists("Aliases Test"));
-		assertFalse(service.exists("Aliases Test","Group Test"));
-		assertFalse(service.exists("Aliases Test","Group Test", "Schema Test"));
-		assertFalse(service.exists("Aliases Test","Group Test", "Schema Test", "Value Test"));
+		service.delete(ALIASES_TEST);
+        verify(variableRepoMock, times(1)).deleteById(SCHEMA_ID);
+        verify(schemaRepoMock, times(1)).deleteById(SCHEMA_ID);
+        verify(groupRepoMock, times(1)).deleteById(GROUP_ID);
+        verify(aliasesRepoMock, times(1)).deleteById(ALIASES_ID);
 	}
 	
 	@Test
 	public void createCascateGroupTest() {
-		service.put("Aliases Test","Group Test");
-		assertTrue(service.exists("Aliases Test"));
+		service.put(ALIASES_TEST,GROUP_TEST);
+        verify(aliasesRepoMock, times(1)).save(any());
 	}
 	
 	@Test
 	public void createCascateSchemaTest() {
-		service.put("Aliases Test","Group Test","Schema Test");
-		assertTrue(service.exists("Aliases Test"));
-		assertTrue(service.exists("Aliases Test","Group Test"));
+		service.put(ALIASES_TEST,GROUP_TEST,SCHEMA_TEST);
+        verify(aliasesRepoMock, times(1)).save(any());
+        verify(groupRepoMock, times(1)).save(any());
 	}
-	
-	@Test
-	public void createCascateValueTest() {
-		service.put("Aliases Test","Group Test","Schema Test","Value Test");
-		assertTrue(service.exists("Aliases Test"));
-		assertTrue(service.exists("Aliases Test","Group Test"));
-		assertTrue(service.exists("Aliases Test","Group Test", "Schema Test"));
-	}
-	
+
 	@Test
 	public void queryValueTest() {
-		service.put("Aliases Test","Group Test","Schema Test","Value Test");
-		assertEquals("Value Test", service.getList("Aliases Test","Group Test","Schema Test").get(0));
-	}
-	
-	@Test
-	public void defaultValueStringTest() {
-		service.put("Aliases Test","Group Test","Schema Test");
-		assertEquals("NOT_SET",service.getList("Aliases Test","Group Test","Schema Test").get(0));
-	}
-	
-	@Test
-	public void defaultValueIntegerTest() {
-		service.put("Aliases Test","Group Test","Schema Test", Type.INTEGER);
-		assertEquals("0", service.getList("Aliases Test","Group Test","Schema Test").get(0));
+		service.put(ALIASES_TEST, GROUP_TEST, SCHEMA_TEST);
+		assertEquals(VALUE_TEST, service.getList(ALIASES_TEST,GROUP_TEST,SCHEMA_TEST).get(0));
 	}
 	
 	@Test
 	public void createAliasesWithVariableTest() {
 		
 		Variable variable = Variable.builder()
-										.aliases("Aliases Test")
+										.aliases(ALIASES_TEST)
 									.build();
 		
 		service.put(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getType(), variable.getValue());
-		assertTrue(service.exists("Aliases Test"));
+        verify(aliasesRepoMock, times(1)).save(any());
 	}
 	
 	@Test
 	public void createGroupWithVariableTest() {
 		
 		Variable variable = Variable.builder()
-										.aliases("Aliases Test")
-										.group("Group Test")
+										.aliases(ALIASES_TEST)
+										.group(GROUP_TEST)
 									.build();
 		
 		service.put(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getType(), variable.getValue());
-		assertTrue(service.exists("Aliases Test","Group Test"));
-	}
-	
-	@Test
-	public void createGroupWithoutAliasesVariableTest() {
-		Variable variable = Variable.builder()
-										.group("Group Test")
-									.build();
-
-		service.put(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getType(), variable.getValue());
-		assertFalse(service.exists(null,"Group Test"));
+        verify(groupRepoMock, times(1)).save(any());
 	}
 	
 	@Test
 	public void createSchemaWithVariableTest() {
 		
 		Variable variable = Variable.builder()
-										.aliases("Aliases Test")
-										.group("Group Test")
-										.schema("Schema Test")
+										.aliases(ALIASES_TEST)
+										.group(GROUP_TEST)
+										.schema(SCHEMA_TEST)
 									.build();
 		
 		service.put(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getType(), variable.getValue());
-		assertTrue(service.exists("Aliases Test","Group Test","Schema Test"));
-	}
-	
-	@Test
-	public void createSchemaWithTypeWithVariableTest() {
-		
-		Variable variable = Variable.builder()
-										.aliases("Aliases Test")
-										.group("Group Test")
-										.schema("Schema Test")
-										.type(Type.INTEGER)
-									.build();
-		
-		service.put(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getType(), variable.getValue());
-		assertEquals(Type.INTEGER, service.getType("Aliases Test","Group Test", "Schema Test"));
-	}
-	
-	@Test
-	public void createSchemaWithoutAliasesTest() {
-		Variable variable = Variable.builder()
-				.group("Group Test")
-				.schema("Schema Test")
-				.type(Type.INTEGER)
-			.build();
-
-		service.put(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getType(), variable.getValue());
-		assertFalse(service.exists("Aliases Test","Group Test", "Schema Test"));
-	}
-	
-	@Test
-	public void createSchemaWithoutGroupTest() {
-		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-				.schema("Schema Test")
-				.type(Type.INTEGER)
-			.build();
-
-		service.put(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getType(), variable.getValue());
-		assertFalse(service.exists("Aliases Test","Group Test", "Schema Test"));
+        verify(schemaRepoMock, times(1)).save(any());
 	}
 	
 	@Test
 	public void createValueStringWithVariableTest() {
 		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-				.group("Group Test")
-				.schema("Schema Test")
-				.value("Value Test")
+				.aliases(ALIASES_TEST)
+				.group(GROUP_TEST)
+				.schema(SCHEMA_TEST)
+				.value(VALUE_TEST)
 			.build();
 
 		service.put(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getType(), variable.getValue());
-		assertEquals("Value Test", service.getList("Aliases Test","Group Test","Schema Test").get(0));
-	}
-	
-	@Test
-	public void createValueIntegerWithVariableTest() {
-		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-				.group("Group Test")
-				.schema("Schema Test")
-				.type(Type.INTEGER)
-				.value("1")
-			.build();
-
-		service.put(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getType(), variable.getValue());
-		assertEquals("1", service.getList("Aliases Test","Group Test","Schema Test").get(0));
-	}
-	
-	@Test
-	public void createValueStringWithVariableWithoutAliasesTest() {
-		Variable variable = Variable.builder()
-				.group("Group Test")
-				.schema("Schema Test")
-				.value("Value Test")
-			.build();
-
-		service.put(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getType(), variable.getValue());
-		assertFalse(service.exists("Aliases Test","Group Test","Schema Test"));
-	}
-	
-	@Test
-	public void createValueStringWithVariableWithoutGroupTest() {
-		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-				.schema("Schema Test")
-				.value("Value Test")
-			.build();
-
-		service.put(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getType(), variable.getValue());
-		assertFalse(service.exists("Aliases Test","Group Test","Schema Test"));
-	}
-	
-	@Test
-	public void createValueStringWithVariableWithoutKeyTest() {
-		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-				.group("Group Test")
-				.value("Value Test")
-			.build();
-
-		service.put(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getType(), variable.getValue());
-		assertFalse(service.exists("Aliases Test","Group Test","Schema Test"));
+        verify(variableRepoMock, times(1)).save(any());
 	}
 	
 	@Test
 	public void deleteAliasesWithVariableTest(){
-		service.put("Aliases Test");
-		
 		Variable variable = Variable.builder()
-								.aliases("Aliases Test")
+								.aliases(ALIASES_TEST)
 							.build();
 		service.delete(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getValue());
-		assertFalse(service.exists("Aliases Test"));
+        verify(aliasesRepoMock, times(1)).deleteById(ALIASES_ID);
 	}
 	
 	@Test
 	public void deleteGroupWithVariableTest(){
-		service.put("Aliases Test","Group Test");
-		
 		Variable variable = Variable.builder()
-								.aliases("Aliases Test")
-								.group("Group Test")
+								.aliases(ALIASES_TEST)
+								.group(GROUP_TEST)
 							.build();
 		service.delete(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getValue());
-		assertFalse(service.exists("Aliases Test","Group Test"));
-	}
-	
-	@Test
-	public void deleteGroupWithVariableWithoutAliasesTest(){
-		service.put("Aliases Test","Group Test");
-		
-		Variable variable = Variable.builder()
-								.group("Group Test")
-							.build();
-		service.delete(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getValue());
-		assertTrue(service.exists("Aliases Test","Group Test"));
+        verify(groupRepoMock, times(1)).deleteById(GROUP_ID);
 	}
 	
 	@Test
 	public void deleteSchemaWithVariableTest(){
-		service.put("Aliases Test", "Group Test", "Schema Test");
-		
-		Variable variable = Variable.builder()
-								.aliases("Aliases Test")
-								.group("Group Test")
-								.schema("Schema Test")
+        Variable variable = Variable.builder()
+								.aliases(ALIASES_TEST)
+								.group(GROUP_TEST)
+								.schema(SCHEMA_TEST)
 							.build();
 		service.delete(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getValue());
-		assertFalse(service.exists("Aliases Test","Group Test", "Schema Test"));
-	}
-	
-	@Test
-	public void deleteSchemaWithVariableWithoutAliasesTest(){
-		service.put("Aliases Test", "Group Test", "Schema Test");
-		
-		Variable variable = Variable.builder()
-									.group("Group Test")
-									.schema("Schema Test")
-							.build();
-		service.delete(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getValue());
-		assertTrue(service.exists("Aliases Test", "Group Test", "Schema Test"));
-	}
-	
-	@Test
-	public void deleteSchemaWithVariableWithoutGroupTest(){
-		service.put("Aliases Test", "Group Test", "Schema Test");
-		
-		Variable variable = Variable.builder()
-									.aliases("Aliases Test")
-									.schema("Schema Test")
-							.build();
-		service.delete(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getValue());
-		assertTrue(service.exists("Aliases Test", "Group Test", "Schema Test"));
+        verify(schemaRepoMock, times(1)).deleteById(SCHEMA_ID);
 	}
 	
 	@Test
 	public void deleteValueWithVariableTest(){
-		service.put("Aliases Test", "Group Test", "Schema Test", "Value Test");
-		
-		Variable variable = Variable.builder()
-								.aliases("Aliases Test")
-								.group("Group Test")
-								.schema("Schema Test")
-								.value("Value Test")
+        Variable variable = Variable.builder()
+								.aliases(ALIASES_TEST)
+								.group(GROUP_TEST)
+								.schema(SCHEMA_TEST)
+								.value(VALUE_TEST)
 							.build();
 		service.delete(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getValue());
-		assertEquals("NOT_SET", service.getList("Aliases Test", "Group Test", "Schema Test").get(0));
-	}
-	
-	@Test
-	public void deleteValueWithVariableWithoutAliasesTest(){
-		service.put("Aliases Test", "Group Test", "Schema Test", "Value Test");
-		
-		Variable variable = Variable.builder()
-									.group("Group Test")
-									.schema("Schema Test")
-									.value("Value Test")
-							.build();
-		service.delete(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getValue());
-		assertTrue(service.exists("Aliases Test", "Group Test", "Schema Test", "Value Test"));
-	}
-	
-	@Test
-	public void deleteValueWithVariableWithoutGroupTest(){
-		service.put("Aliases Test", "Group Test", "Schema Test", "Value Test");
-		
-		Variable variable = Variable.builder()
-									.aliases("Aliases Test")
-									.schema("Schema Test")
-									.value("Value Test")
-							.build();
-		service.delete(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getValue());
-		assertTrue(service.exists("Aliases Test", "Group Test", "Schema Test", "Value Test"));
-	}
-	
-	@Test
-	public void deleteValueWithVariableWithoutSchemaTest(){
-		service.put("Aliases Test", "Group Test", "Schema Test", "Value Test");
-		
-		Variable variable = Variable.builder()
-									.aliases("Aliases Test")
-									.group("Group Test")
-									.value("Value Test")
-							.build();
-		service.delete(variable.getAliases(), variable.getGroup(), variable.getSchema(), variable.getValue());
-		assertTrue(service.exists("Aliases Test", "Group Test", "Schema Test", "Value Test"));
-	}
-	
-	@Test
-	public void queryAliasesWithVariableTest() {
-		service.put("Aliases Test", "Group Test 1");
-		service.put("Aliases Test", "Group Test 2");
-		service.put("Aliases Test", "Group Test 3");
-		
-		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-			.build();
-		
-		assertEquals(3,service.getList(variable.getAliases(), variable.getGroup(), variable.getSchema()).size());
-	}
-	
-	@Test
-	public void queryGroupWithVariableTest() {
-		service.put("Aliases Test", "Group Test", "Schema Test 1");
-		service.put("Aliases Test", "Group Test", "Schema Test 2");
-		service.put("Aliases Test", "Group Test", "Schema Test 3");
-		
-		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-				.group("Group Test")
-			.build();
-		
-		assertEquals(3,service.getList(variable.getAliases(), variable.getGroup(), variable.getSchema()).size());
-	}
-	
-	@Test
-	public void queryGroupWithVariableWithoutAliasesTest() {
-		service.put("Aliases Test", "Group Test", "Schema Test 1");
-		service.put("Aliases Test", "Group Test", "Schema Test 2");
-		service.put("Aliases Test", "Group Test", "Schema Test 3");
-		
-		Variable variable = Variable.builder()
-				.group("Group Test")
-			.build();
-		
-		assertEquals("SCHEMA NOT FOUND",service.getList(variable.getAliases(), variable.getGroup(), variable.getSchema()).get(0));
+        verify(variableRepoMock, times(1)).deleteById(SCHEMA_ID);
 	}
 	
 }

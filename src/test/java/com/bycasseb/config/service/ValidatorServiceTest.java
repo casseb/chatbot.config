@@ -1,12 +1,12 @@
 package com.bycasseb.config.service;
 
+import com.bycasseb.config.common.TestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.bycasseb.config.ds.Type;
@@ -20,8 +20,7 @@ import com.bycasseb.config.ds.exception.NullValueException;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest(includeFilters = @Filter(Service.class))
-@ActiveProfiles("test")
-public class ValidatorServiceTest {
+public class ValidatorServiceTest extends TestSupport {
 
 	@Autowired
 	private ValidatorService service;
@@ -29,11 +28,11 @@ public class ValidatorServiceTest {
 	@Test
 	public void validateStringTypeTest() throws Exception {
 		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-				.group("Group Test")
-				.type(Type.STRING)
-				.schema("Key Test")
-				.value("Value Test")
+				.aliases(ALIASES_TEST)
+				.group(GROUP_TEST)
+				.type(TYPE_STRING_TEST)
+				.schema(SCHEMA_TEST)
+				.value(VALUE_TEST)
 			.build();
 		
 		service.execute(variable);
@@ -42,11 +41,11 @@ public class ValidatorServiceTest {
 	@Test(expected = InvalidValueException.class)
 	public void validateIntegerTypeWithStringTest() throws Exception {
 		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-				.group("Group Test")
-				.type(Type.INTEGER)
-				.schema("Key Test")
-				.value("Value Test")
+				.aliases(ALIASES_TEST)
+				.group(GROUP_TEST)
+				.type(TYPE_INTEGER_TEST)
+				.schema(SCHEMA_TEST)
+				.value(VALUE_TEST)
 			.build();
 		
 		service.execute(variable);
@@ -68,10 +67,10 @@ public class ValidatorServiceTest {
 	@Test(expected = NullAliasesException.class)
 	public void validateNullAliasesTest() throws Exception {
 		Variable variable = Variable.builder()
-				.group("Group Test")
-				.type(Type.STRING)
-				.schema("Key Test")
-				.value("Value Test")
+				.group(GROUP_TEST)
+				.type(TYPE_STRING_TEST)
+				.schema(SCHEMA_TEST)
+				.value(VALUE_TEST)
 			.build();
 		
 		service.execute(variable);
@@ -80,10 +79,10 @@ public class ValidatorServiceTest {
 	@Test(expected = NullGroupException.class)
 	public void validateNullGroupTest() throws Exception {
 		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-				.type(Type.STRING)
-				.schema("Key Test")
-				.value("Value Test")
+				.aliases(ALIASES_TEST)
+				.type(TYPE_STRING_TEST)
+				.schema(SCHEMA_TEST)
+				.value(VALUE_TEST)
 			.build();
 		
 		service.execute(variable);
@@ -92,10 +91,10 @@ public class ValidatorServiceTest {
 	@Test(expected = NullTypeException.class)
 	public void validateNullTypeTest() throws Exception {
 		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-				.group("Group Test")
-				.schema("Key Test")
-				.value("Value Test")
+				.aliases(ALIASES_TEST)
+				.group(GROUP_TEST)
+				.schema(SCHEMA_TEST)
+				.value(VALUE_TEST)
 			.build();
 		
 		service.execute(variable);
@@ -104,10 +103,10 @@ public class ValidatorServiceTest {
 	@Test(expected = NullKeyException.class)
 	public void validateNullKeyTest() throws Exception {
 		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-				.group("Group Test")
-				.type(Type.STRING)
-				.value("Value Test")
+				.aliases(ALIASES_TEST)
+				.group(GROUP_TEST)
+				.type(TYPE_STRING_TEST)
+				.value(VALUE_TEST)
 			.build();
 		
 		service.execute(variable);
@@ -116,10 +115,10 @@ public class ValidatorServiceTest {
 	@Test(expected = NullValueException.class)
 	public void validateNullValueTest() throws Exception {	
 		Variable variable = Variable.builder()
-				.aliases("Aliases Test")
-				.group("Group Test")
-				.type(Type.STRING)
-				.schema("Key Test")
+				.aliases(ALIASES_TEST)
+				.group(GROUP_TEST)
+				.type(TYPE_STRING_TEST)
+				.schema(SCHEMA_TEST)
 			.build();
 		
 		service.execute(variable);

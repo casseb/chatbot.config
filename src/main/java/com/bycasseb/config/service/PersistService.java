@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.bycasseb.config.ds.PersistedVariable;
 
-public interface PersistService {
+interface PersistService {
 
 	void save(PersistedVariable variable);
 

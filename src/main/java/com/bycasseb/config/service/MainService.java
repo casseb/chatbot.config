@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.bycasseb.config.ds.Type;
 
-public interface MainService {
+interface MainService {
 	
 	void put(String aliases);
 	void put(String aliases, String group);

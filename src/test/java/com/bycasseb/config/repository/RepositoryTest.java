@@ -64,7 +64,7 @@ public class RepositoryTest extends TestSupport {
     public void saveAndFindSchemaTest(){
         schemaRepo.deleteById(ID_TEST);
 
-        PersistedSchema value = new PersistedSchema(ALIASES_TEST, GROUP_TEST, SCHEMA_TEST, TYPE_TEST);
+        PersistedSchema value = new PersistedSchema(ALIASES_TEST, GROUP_TEST, SCHEMA_TEST, TYPE_STRING_TEST);
         schemaRepo.save(value);
 
         assertTrue(schemaRepo.existsById(ALIASES_TEST + SEPARATOR + GROUP_TEST + SEPARATOR + SCHEMA_TEST));
