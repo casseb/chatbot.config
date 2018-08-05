@@ -2,36 +2,34 @@ package com.bycasseb.config.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
-import com.bycasseb.config.ds.*;
+import com.bycasseb.config.common.ClassTest;
+import com.bycasseb.config.ds.PersistedGroup;
+import com.bycasseb.config.ds.PersistedSchema;
+import com.bycasseb.config.ds.PersistedVariable;
+import com.bycasseb.config.ds.Variable;
 import com.bycasseb.config.repository.AliasesRepository;
 import com.bycasseb.config.repository.GroupRepository;
 import com.bycasseb.config.repository.SchemaRepository;
 import com.bycasseb.config.repository.VariableRepository;
+
 import lombok.SneakyThrows;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.stereotype.Service;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import com.bycasseb.config.common.TestSupport;
-
-@RunWith(SpringRunner.class)
-@DataMongoTest(includeFilters = @Filter(Service.class))
-@ActiveProfiles("test")
-public class MainServiceTest extends TestSupport{
+public class MainServiceTest extends ClassTest {
 	
 	@InjectMocks
 	private MainServiceImpl service;

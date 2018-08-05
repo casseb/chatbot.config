@@ -1,29 +1,24 @@
 package com.bycasseb.config.service;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
 
-import com.bycasseb.config.repository.VariableRepository;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.stereotype.Service;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import com.bycasseb.config.common.TestSupport;
+import com.bycasseb.config.common.ClassTest;
+import com.bycasseb.config.ds.PersistedVariable;
 import com.bycasseb.config.ds.Type;
 import com.bycasseb.config.ds.Variable;
-import com.bycasseb.config.ds.PersistedVariable;
+import com.bycasseb.config.repository.VariableRepository;
 
-@RunWith(SpringRunner.class)
-@DataMongoTest(includeFilters = @Filter(Service.class))
-public class PersistServiceTest extends TestSupport{
+public class PersistServiceTest extends ClassTest {
 
 	@InjectMocks
 	private PersistServiceImpl service;
@@ -35,9 +30,9 @@ public class PersistServiceTest extends TestSupport{
 		PersistedVariable persistedvariable = getPersistedVariable();
 
 		Optional<PersistedVariable> dummyVariable = Optional.of(persistedvariable);
-		doReturn(dummyVariable).when(variableRepoMock).findById(ALIASES_TEST + SEPARATOR + GROUP_TEST + SEPARATOR + SCHEMA_TEST);
+		doReturn(dummyVariable).when(variableRepoMock).findById(SCHEMA_ID);
 
-		Optional<PersistedVariable> result = service.query(ALIASES_TEST + SEPARATOR + GROUP_TEST + SEPARATOR + SCHEMA_TEST);
+		Optional<PersistedVariable> result = service.query(SCHEMA_ID);
 		assertTrue(result.isPresent());
 		assertEquals(persistedvariable, result.get());
 	}
@@ -50,7 +45,6 @@ public class PersistServiceTest extends TestSupport{
 		verify(variableRepoMock, times(1)).save(persistedvariable);
 	}
 
-	@NotNull
 	private PersistedVariable getPersistedVariable() {
 		Variable variable = Variable.builder()
 				.aliases(ALIASES_TEST)

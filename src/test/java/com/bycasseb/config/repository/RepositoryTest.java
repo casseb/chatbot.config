@@ -1,22 +1,23 @@
 package com.bycasseb.config.repository;
 
-import com.bycasseb.config.common.TestSupport;
-import com.bycasseb.config.ds.*;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Repository;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-
 import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringRunner.class)
-@DataMongoTest(includeFilters = @ComponentScan.Filter(Repository.class))
-@ActiveProfiles("test")
-public class RepositoryTest extends TestSupport {
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Repository;
+
+import com.bycasseb.config.common.ClassTest;
+import com.bycasseb.config.ds.PersistedAliases;
+import com.bycasseb.config.ds.PersistedGroup;
+import com.bycasseb.config.ds.PersistedSchema;
+import com.bycasseb.config.ds.PersistedVariable;
+import com.bycasseb.config.ds.User;
+
+@SpringBootTest
+public class RepositoryTest extends ClassTest{
 
     @Autowired
     private VariableRepository variableRepo;

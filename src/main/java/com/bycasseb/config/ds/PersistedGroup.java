@@ -1,6 +1,6 @@
 package com.bycasseb.config.ds;
 
-import com.bycasseb.config.common.MainConstants;
+import com.bycasseb.config.common.Constants;
 import org.springframework.data.annotation.Id;
 
 import lombok.Data;
@@ -19,7 +19,7 @@ public class PersistedGroup {
 	
 	public PersistedGroup(String aliases, String name) {
 		super();
-		this.id = aliases + MainConstants.SEPARATOR + name;
+		this.id = aliases + Constants.SEPARATOR + name;
 		this.aliases = aliases;
 		this.name = name;
 	}

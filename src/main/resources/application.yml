@@ -1,19 +1,15 @@
-server:
-  port: 4560
-      
 spring:
   output:
     ansi:
       enabled: always
+  jersey:
+    init:
+      jersey:
+        config:
+          server:
+            response:
+              setStatusOverSendError: true
   profiles:
     active: dev
-
-logging:
-  pattern:
-    console: '%clr(%5p) %d{dd/MM/yy-HH:mm:ss}:%logger{0}[%M,%-4L] - %msg%n'
-    file: '%-5level %d{dd/MM/yy-HH:mm:ss}:%logger{0}[%M,%-4L] - %msg%n'
-  level:  
-    #Spring
-    org.springframework: ERROR
-    #MongoDB
-    org.mongodb.driver: ERROR
+server:
+  port: 4560

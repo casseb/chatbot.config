@@ -1,14 +1,13 @@
 package com.bycasseb.config.service;
 
-import com.bycasseb.config.common.TestSupport;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.junit4.SpringRunner;
 
+import com.bycasseb.config.common.ClassTest;
 import com.bycasseb.config.ds.Type;
 import com.bycasseb.config.ds.Variable;
 import com.bycasseb.config.ds.exception.InvalidValueException;
@@ -18,9 +17,8 @@ import com.bycasseb.config.ds.exception.NullKeyException;
 import com.bycasseb.config.ds.exception.NullTypeException;
 import com.bycasseb.config.ds.exception.NullValueException;
 
-@RunWith(SpringRunner.class)
-@DataMongoTest(includeFilters = @Filter(Service.class))
-public class ValidatorServiceTest extends TestSupport {
+@SpringBootTest
+public class ValidatorServiceTest extends ClassTest {
 
 	@Autowired
 	private ValidatorService service;
