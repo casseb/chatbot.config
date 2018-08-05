@@ -23,7 +23,7 @@ public class RestTest extends ClassTest{
 	private UserRepository userRepo;
 	
 	@Before
-	public void before() {
+	public void superBefore() {
 		userRepo.deleteAll();
 		port = PORT;
 	}

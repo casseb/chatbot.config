@@ -26,6 +26,8 @@ import com.bycasseb.config.ds.User;
 import com.bycasseb.config.ds.Variable;
 import com.bycasseb.config.service.RestService;
 
+import static com.bycasseb.config.common.Constants.*;
+
 @Component
 @Path("/")
 @CrossOrigin(origins = "*")
@@ -36,7 +38,7 @@ public class MainRestController {
 	
 	@POST
 	@PermitAll
-	@Path("/newUser")
+	@Path(ROUTE_NEW_USER)
 	public Response newUser(User user) {
 		return restService.newUser(user);
 	}
@@ -55,7 +57,7 @@ public class MainRestController {
 	}
 	
 	@GET
-	@Produces("application/json")
+	@Produces(HEADER_JSON)
 	public Response getGroups(@HeaderParam("Authorization") String auth) {
 		String aliases = getCurrentUser(auth);
 		
@@ -67,7 +69,7 @@ public class MainRestController {
 	
 	@DELETE
 	@Path("{group}")
-	@Produces("application/json")
+	@Produces(HEADER_JSON)
 	public Response deleteGroups(@PathParam("group") String group, @HeaderParam("Authorization") String auth) {
 		String aliases = getCurrentUser(auth);
 		
@@ -94,7 +96,7 @@ public class MainRestController {
 	
 	@GET
 	@Path("{group}")
-	@Produces("application/json")
+	@Produces(HEADER_JSON)
 	public Response getGroups(@PathParam("group") String group, @HeaderParam("Authorization") String auth) {
 		String aliases = getCurrentUser(auth);
 		
@@ -107,7 +109,7 @@ public class MainRestController {
 	
 	@DELETE
 	@Path("{group}/{schema}")
-	@Produces("application/json")
+	@Produces(HEADER_JSON)
 	public Response deleteSchema(@PathParam("group") String group, @PathParam("schema") String schema, @HeaderParam("Authorization") String auth) {
 		String aliases = getCurrentUser(auth);
 		
@@ -121,7 +123,7 @@ public class MainRestController {
 	
 	@PUT
 	@Path("{group}/{schema}")
-	@Consumes("application/json")
+	@Consumes(HEADER_JSON)
 	public Response putSchemaWithType(@PathParam("group") String group, 
 									  @PathParam("schema") String schema,
 									  @QueryParam("type") Type type, 
@@ -141,7 +143,7 @@ public class MainRestController {
 	
 	@GET
 	@Path("{group}/{schema}")
-	@Produces("application/json")
+	@Produces(HEADER_JSON)
 	public Response getTypeSchema(@PathParam("group") String group, 
 								  @PathParam("schema") String schema,
 								  @HeaderParam("Authorization") String auth,
@@ -163,7 +165,7 @@ public class MainRestController {
 	
 	@PUT
 	@Path("{group}/{schema}/{value}")
-	@Consumes("application/json")
+	@Consumes(HEADER_JSON)
 	public Response putValue(@PathParam("group") String group, 
 									  @PathParam("schema") String schema,
 									  @PathParam("value") String value,
@@ -184,14 +186,14 @@ public class MainRestController {
 	}
 	
 	@PUT
-	@Consumes("application/json")
+	@Consumes(HEADER_JSON)
 	public Response putWithVariable(Variable variable, @HeaderParam("Authorization") String auth) {
 		variable.setAliases(getCurrentUser(auth));
 		return restService.put(variable);
 	}
 	
 	@DELETE
-	@Consumes("application/json")
+	@Consumes(HEADER_JSON)
 	public Response deleteWithVariable(Variable variable, @HeaderParam("Authorization") String auth) {
 		variable.setAliases(getCurrentUser(auth));
 		return restService.delete(variable);

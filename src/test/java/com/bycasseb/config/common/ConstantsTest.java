@@ -15,6 +15,8 @@ public interface ConstantsTest extends Constants{
     static final String USER_TEST = "User Test";
     static final String PASSWORD_TEST = "Password Test";
     static final String INVALID_TEST = "Invalid Test";
+    
+    static final long TIMEOUT = 2500;
 
     static final User INSTANCE_USER_TEST = new User(USER_TEST, PASSWORD_TEST);
 
